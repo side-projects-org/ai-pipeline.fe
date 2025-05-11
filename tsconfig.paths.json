@@ -5,11 +5,12 @@
       "@components/*": ["components/*"],
       "@apis/*": ["apis/*"],
       "@state/*": ["state/*"],
-      "@types/*": ["types/*"],
-      "@root/*": ["*"],
-      "@page/*": ["page/*"],
+      "@/types/*": ["types/*"],
+      "@pages/*": ["pages/*"],
       "@common/*": ["common/*"],
-      "@hooks/*": ["hooks/*"]
+      "@hooks/*": ["hooks/*"],
+      "@routes": ["routes/index.tsx"],
+      "@routes/*": ["routes/*"]
     }
   }
 }
