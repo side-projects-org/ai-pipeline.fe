@@ -7,8 +7,13 @@ import {createPrompt} from "@apis/prompt";
 
 const CreatePrompt: React.FC = () => {
     const [messages, setMessages] = React.useState<number[]>(Array.from({length: 5}, (_, i) => i));
+    const [domain, setDomain] = React.useState<string>("");
 
+    const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDomain(e.target.value);
+    }
     const [data, setData]= React.useState<any>(null);
+    const [data2, setData2]= React.useState<any>(null);
 
     useEffect(() => {
         getPrompts()
@@ -47,7 +52,7 @@ const CreatePrompt: React.FC = () => {
 
     return (
         <Layout>
-            <TextInput type="text" placeholder="프롬프트를 제목을 입력하세요." />
+            <TextInput type="text" placeholder="여기에 도메인을 입력하세요." value={domain} onChange={handleDomainChange}/>
             <TextInput type="text" placeholder="프롬프트 식별값을 입력하세요." />
             <TextInput type="text" placeholder="작성자 이름을 입력하세요." />
             <TextInput type="text" placeholder="temparature" />
@@ -64,7 +69,8 @@ const CreatePrompt: React.FC = () => {
             <TextInput type="text" placeholder="logit_bias" />
             <TextInput type="text" placeholder="user" />
             <TextInput type="text" placeholder="stop_sequence" />
-            <TextInput type="text" value={`${JSON.stringify(data)}`} />
+            <TextArea value={`${JSON.stringify(data, null, 4)}`} />
+            <TextArea value={`${JSON.stringify(data2, null, 4)}`} />
             <Messages>
                 {messages.map((i) => {
                     return (
@@ -88,6 +94,10 @@ const CreatePrompt: React.FC = () => {
                 // TODO: save prompt
                 console.log("save prompt");
                 await createPrompts();
+                console.log(`domain : ${domain}`)
+                const res = await api.prompt.getSample(domain);
+
+                setData2(res);
             }}>저장</SaveButton>
         </Layout>
     )
@@ -104,6 +114,15 @@ const Layout = styled.div`
 `;
 
 const TextInput = styled.input`
+    min-width: 15rem;
+    max-width: 30rem;
+    height: 3rem;
+    border-radius: 0.8rem;
+    border: 1px solid black;
+    padding: 0 0.8rem;
+`;
+
+const TextArea = styled.textarea`
     min-width: 15rem;
     max-width: 30rem;
     height: 3rem;

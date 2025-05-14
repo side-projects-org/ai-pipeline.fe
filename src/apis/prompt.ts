@@ -56,9 +56,15 @@ interface ICreatePrompt {
     temperature: number;
     model: string;
     response_format: string;
-
 }
+
+
 export const createPrompt = async (data: ICreatePrompt): Promise<IPrompt> => {
     const res = await fetch("/prompt");
+    return res.json();
+}
+
+export const getSample = async (domain: string): Promise<any> => {
+    const res = await fetch(domain);
     return res.json();
 }
