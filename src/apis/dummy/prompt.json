@@ -1,0 +1,84 @@
+{
+  "getPrompts": [
+    {
+      "key": "key-1",
+      "name": "Prompt 1",
+      "writer": "Writer 1",
+      "description": "This is a description for Prompt 1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of France?"
+        },
+        {
+          "role": "assistant",
+          "content": "The capital of France is Paris."
+        }
+      ],
+      "max_tokens": 3000,
+      "temperature": 0.7,
+      "model": "gpt-3.5-turbo",
+      "response_format": "text"
+    },
+    {
+      "key": "key-2",
+      "name": "Prompt 2",
+      "writer": "Writer 2",
+      "description": "This is a description for Prompt 2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of Germany?"
+        },
+        {
+          "role": "assistant",
+          "content": "The capital of Germany is Berlin."
+        }
+      ],
+      "max_tokens": 3000,
+      "temperature": 0.7,
+      "model": "gpt-3.5-turbo",
+      "response_format": "text"
+    },
+    {
+      "key": "key-3",
+      "name": "Prompt 3",
+      "writer": "Writer 3",
+      "description": "This is a description for Prompt 3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of Italy?"
+        },
+        {
+          "role": "assistant",
+          "content": "The capital of Italy is Rome."
+        }
+      ],
+      "max_tokens": 3000,
+      "temperature": 0.7,
+      "model": "gpt-3.5-turbo",
+      "response_format": "text"
+    }
+  ],
+  "createPrompt": {
+    "key": "key-4",
+    "name": "Prompt 4",
+    "writer": "Writer 4",
+    "description": "This is a description for Prompt 4",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the capital of Spain?"
+      },
+      {
+        "role": "assistant",
+        "content": "The capital of Spain is Madrid."
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.7,
+    "model": "gpt-3.5-turbo",
+    "response_format": "text"
+  }
+}

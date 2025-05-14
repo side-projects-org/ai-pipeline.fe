@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import CreatePrompt from "../page/prompt/CreatePrompt";
+import CreatePrompt from "@pages/prompt/CreatePrompt";
 
 export const promptRoutes: RouteObject[] = [
     {path: '/prompt/new', element: <CreatePrompt />},

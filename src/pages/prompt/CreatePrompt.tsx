@@ -1,10 +1,49 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
+import {api} from "@apis/index";
+import {json} from "node:stream/consumers";
+import {createPrompt} from "@apis/prompt";
 
 
 const CreatePrompt: React.FC = () => {
     const [messages, setMessages] = React.useState<number[]>(Array.from({length: 5}, (_, i) => i));
 
+    const [data, setData]= React.useState<any>(null);
+
+    useEffect(() => {
+        getPrompts()
+    }, []);
+
+    const getPrompts = async () => {
+        const res = await api.prompt.getPrompts()
+
+        setData(res);
+    }
+
+    const createPrompts = async () => {
+        const res = await api.prompt.createPrompt({
+            name: "Prompt NEW",
+            writer: "Writer 1",
+            description: "This is a description for Prompt 1",
+            messages: [
+                {
+                    role: "user",
+                    content: "What is the capital of France?"
+                },
+                {
+                    role: "assistant",
+                    content: "The capital of France is Paris."
+                }
+            ],
+            max_tokens: 3000,
+            temperature: 0.7,
+            model: "gpt-3.5-turbo",
+            response_format: "text"
+        })
+
+        console.log(res);
+        setData(res);
+    }
 
     return (
         <Layout>
@@ -25,6 +64,7 @@ const CreatePrompt: React.FC = () => {
             <TextInput type="text" placeholder="logit_bias" />
             <TextInput type="text" placeholder="user" />
             <TextInput type="text" placeholder="stop_sequence" />
+            <TextInput type="text" value={`${JSON.stringify(data)}`} />
             <Messages>
                 {messages.map((i) => {
                     return (
@@ -44,9 +84,10 @@ const CreatePrompt: React.FC = () => {
                     setMessages((prev) => [...prev, prev.length]);
                 }}>메시지 추가</AddMessageButton>
             </Messages>
-            <SaveButton onClick={() => {
+            <SaveButton onClick={async () => {
                 // TODO: save prompt
                 console.log("save prompt");
+                await createPrompts();
             }}>저장</SaveButton>
         </Layout>
     )
