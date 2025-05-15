@@ -1,9 +1,10 @@
 import { RouteObject } from 'react-router-dom';
-import CreatePrompt from "@pages/prompt/CreatePrompt";
+import PromptPlayground from "@pages/prompt/PromptPlayground";
 
 export const promptRoutes: RouteObject[] = [
-    {path: '/prompt/new', element: <CreatePrompt />},
+    {path: '/', element: <PromptPlayground />},
+    {path: '/prompt/playground', element: <PromptPlayground />},
     {path: '/prompt/:id', element: <div>Prompt Detail</div>},
     {path: '/prompt/:id/edit', element: <div>Edit Prompt</div>},
-    {path: '/prompt', element: <div>Prompt List</div>},
+    {path: '/prompt/list', element: <div>Prompt List</div>},
 ];
