@@ -10,7 +10,8 @@
       "@common/*": ["common/*"],
       "@hooks/*": ["hooks/*"],
       "@routes": ["routes/index.tsx"],
-      "@routes/*": ["routes/*"]
+      "@routes/*": ["routes/*"],
+      "@layout/*": ["layout/*"]
     }
   }
 }
