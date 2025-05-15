@@ -19,12 +19,14 @@ const Layout: React.FC = () => (
 const LayoutContainer = styled.div`
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
     padding: 0 1rem;
+    max-width: 100%;
 `;
 
 const Main = styled.main`
-  flex: 1;
+    flex: 1;
+    min-height: calc(100% - 60px); /* Adjust based on header/footer height */
 `;
 
 
