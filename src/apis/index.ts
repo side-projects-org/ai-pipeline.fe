@@ -1,7 +1,6 @@
 import * as promptApi from '@apis/prompt';
 import dummyPrompt from '@apis/dummy/prompt.json'
 import {useDummy} from "@apis/apiConfig";
-import Module from "node:module";
 
 console.log("promptApi", promptApi);
 console.log("typeof promptApi", typeof promptApi);

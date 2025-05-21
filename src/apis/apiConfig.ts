@@ -1,5 +1,5 @@
 export const useDummy = {
-    getPrompts: true,
-    createPrompt: true,
-    getSample: false,
+    getAllPromptsByName: false,
+    getAllPromptByVersion: false,
+    createPrompt: false,
 }

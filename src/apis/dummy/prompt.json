@@ -1,5 +1,5 @@
 {
-  "getPrompts": [
+  "getAllPromptByVersion": [
     {
       "key": "key-1",
       "name": "Prompt 1",
@@ -61,7 +61,7 @@
       "response_format": "text"
     }
   ],
-  "createPrompt": {
+  "getAllPromptsByName": {
     "key": "key-4",
     "name": "Prompt 4",
     "writer": "Writer 4",
