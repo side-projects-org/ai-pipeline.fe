@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import LabeledInput from "@components/atom/LabeledInput";
 import {v4 as uuidv4} from "uuid";
+import {api} from "@apis/index";
 
 
 const PromptPlayground: React.FC = () => {
@@ -56,6 +57,30 @@ const PromptPlayground: React.FC = () => {
         setPopupVisible(false);
     }
 
+    const handleSaveButtonClick = () => {
+        setResponse(null);
+        setPopupMessage("프롬프트를 실행합니다!");
+        setPopupVisible(true);
+
+        api.prompt.createPrompt({
+            prompt_name: promptName,
+            version: promptVersion,
+            messages: dummyMessages,
+            max_tokens: maxTokens,
+            max_completion_tokens: maxTokens,
+            model: "gpt-3.5-turbo",
+            response_format: "text",
+            temperature: temperature,
+        }).then((res) => {
+            console.log(res);
+            setResponse(res);
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => {
+            setPopupVisible(false);
+        })
+    }
+
     return (
         <PageLayout>
             <PromptWrapper>
@@ -95,15 +120,7 @@ const PromptPlayground: React.FC = () => {
                     </MessagesContainer>
                 </PromptSettingWrapper>
                 <ButtonWrapper>
-                    <RunButton onClick={async () => {
-                        setResponse(null);
-                        setPopupMessage("프롬프트를 실행합니다!");
-                        setPopupVisible(true);
-                        setTimeout(() => {
-                            setResponse(dummyResponse);
-                            setPopupVisible(false);
-                        }, 2000);
-                    }}>실행</RunButton>
+                    <RunButton onClick={handleSaveButtonClick}>실행</RunButton>
                     <SaveButton onClick={async () => {
                         // todo
                     }}>저장</SaveButton>
