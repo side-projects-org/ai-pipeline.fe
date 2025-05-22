@@ -1,9 +1,9 @@
 import * as promptApi from '@apis/prompt';
+import * as aiApi from '@apis/ai';
 import dummyPrompt from '@apis/dummy/prompt.json'
+import dummyAi from '@apis/dummy/prompt.json'
 import {useDummy} from "@apis/apiConfig";
 
-console.log("promptApi", promptApi);
-console.log("typeof promptApi", typeof promptApi);
 
 type ApiFn = (...args: any[]) => Promise<any>;
 
@@ -25,5 +25,6 @@ function buildProxy<T extends Record<string, ApiFn>>(
 }
 
 export const api = {
-    prompt: buildProxy(promptApi, dummyPrompt, useDummy),
+    prompt: buildProxy(promptApi, dummyPrompt, useDummy.prompt),
+    ai: buildProxy(aiApi, dummyAi, useDummy.ai),
 }

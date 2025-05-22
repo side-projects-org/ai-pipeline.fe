@@ -1,0 +1,40 @@
+{
+  "getNewAIResponse": {
+    "used_prompt": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of France?"
+        },
+        {
+          "role": "assistant",
+          "content": "The capital of France is Paris."
+        }
+      ],
+      "max_tokens": 3000,
+      "temperature": 0.7,
+      "model": "gpt-3.5-turbo"
+    },
+    "response": {
+      "id": "chatcmpl-7Q1x2v4g5j8k3l2m3n4o5p6q7r8s9t",
+      "object": "chat.completion",
+      "created": 1691234567,
+      "model": "gpt-3.5-turbo",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "The capital of France is Paris."
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 10,
+        "total_tokens": 20
+      }
+    }
+  }
+}

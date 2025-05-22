@@ -87,7 +87,6 @@ const PromptPlayground: React.FC = () => {
         setPopupVisible(false);
     }
 
-    const handleSaveButtonClick = () => {
     const handleRunButtonClick = async () => {
         const data = {
             model: "gpt-3.5-turbo",
@@ -99,12 +98,17 @@ const PromptPlayground: React.FC = () => {
             setResponse(null);
             setPopupMessage("AI 에게 질문을 던집니다!");
             setPopupVisible(true);
+
+            const res = await api.ai.getNewAIResponse(data);
+
+            setResponse(res);
         } catch (err) {
             console.error(err);
         } finally {
             setPopupVisible(false);
         }
     }
+
     const handleSaveButtonClick = async () => {
         // 인풋값 추가 검증
         if (isSaveButtonDisabled()) {

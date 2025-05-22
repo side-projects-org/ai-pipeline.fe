@@ -1,5 +1,12 @@
 export const useDummy = {
-    getAllPromptsByName: false,
-    getAllPromptByVersion: false,
-    createPrompt: false,
+    prompt: {
+        getAllPromptsByName: false,
+        getAllPromptByVersion: false,
+        createPrompt: false,
+    },
+    ai: {
+        getNewAIResponse: true,
+        getAllAIResponse: false
+        // getNewAIResponseStream: false,
+    }
 }
