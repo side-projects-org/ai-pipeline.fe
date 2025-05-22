@@ -1,7 +1,7 @@
 import * as promptApi from '@apis/prompt';
 import * as aiApi from '@apis/ai';
 import dummyPrompt from '@apis/dummy/prompt.json'
-import dummyAi from '@apis/dummy/prompt.json'
+import dummyAi from '@apis/dummy/ai.json'
 import {useDummy} from "@apis/apiConfig";
 
 
