@@ -6,7 +6,7 @@ export const useDummy = {
         createPrompt: false,
     },
     ai: {
-        getNewAIResponse: true,
+        getNewAIResponse: false,
         getAllAIResponse: false
         // getNewAIResponseStream: false,
     }

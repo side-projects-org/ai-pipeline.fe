@@ -93,6 +93,7 @@ const PromptPlayground: React.FC = () => {
             messages: dummyMessages,
             temperature: temperature,
             max_tokens: maxTokens,
+            max_completion_tokens: maxTokens
         }
         try {
             setResponse(null);
