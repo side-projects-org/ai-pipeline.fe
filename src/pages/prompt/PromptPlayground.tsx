@@ -85,13 +85,13 @@ const PromptPlayground: React.FC = () => {
         <PageLayout>
             <PromptWrapper>
                 <PromptSettingWrapper>
-                    <LabeledInput label={"이름"} type={"text"} value={promptName}
+                    <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름"} validate={v => !!v} guideLine={"이름은 필수입니다."} guideColor={"red"}
                                   onChange={e => setPromptName(e.target.value)}/>
-                    <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()}
+                    <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()} validate={v => !!v} guideLine={"버전은 필수입니다."} guideColor={"red"}
                                   onChange={e => setPromptVersion(e.target.value)}/>
-                    <LabeledInput label={"최대 토큰 수"} type={"number"} value={maxTokens}
+                    <LabeledInput label={"최대 토큰 수"} type={"number"} value={maxTokens} validate={v => Number.isInteger(v) && v > 0} guideLine={"토큰은 정수이며, 0 보다 커야 합니다."} guideColor={"red"}
                                   onChange={e => setMaxTokens(Number(e.target.value))}/>
-                    <LabeledInput label={"창의성"} type={"number"} value={temperature}
+                    <LabeledInput label={"창의성"} type={"number"} value={temperature} placeholder={"0~1"} validate={v => !isNaN(v) && v >= 0 && v <= 1} guideLine={"창의성은 0과 1 사이의 숫자입니다."} guideColor={"red"}
                                   onChange={e => setTemperature(Number(e.target.value))}/>
                     <MessagesContainer>
                         {dummyMessages.map((message, index) => {
