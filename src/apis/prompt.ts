@@ -2,10 +2,10 @@ import axiosInstance from "@common/axios";
 import {IPrompt} from "@/types/IPrompt";
 
 
-export const getAllPromptsByName = async (prompt_name: string): Promise<IPrompt[]> => {
+export const getAllPromptsByName = async (promptName: string): Promise<IPrompt[]> => {
     const res = await axiosInstance.get("/prompt", {
         params: {
-            prompt_name: prompt_name
+            prompt_name: promptName
         }
     });
 
