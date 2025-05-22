@@ -11,6 +11,8 @@ const PromptPlayground: React.FC = () => {
     const [maxTokens, setMaxTokens] = React.useState<number>(100);
     const [temperature, setTemperature] = React.useState<number>(1);
 
+    const [saveMode, setSaveMode] = React.useState<boolean>(false);
+
     const [dummyMessages, setDummyMessages] = React.useState<any[]>([
         {
             role: "user",
@@ -47,6 +49,34 @@ const PromptPlayground: React.FC = () => {
         }
     }
 
+    const validatePromptName = (name: string) => !!name;
+
+    const validateVersion = (version: string) => !!version;
+
+    const validateMaxTokens = (tokens: number) => Number.isInteger(tokens) && tokens > 0;
+
+    const validateTemperature = (temp: number) => !isNaN(temp) && temp >= 0 && temp <= 1;
+
+    const validateMessages = (messages: any[]) => messages.length > 0 && messages.every(msg => !!msg.content);
+
+    const validateFunctions = [
+        () => validateMaxTokens(maxTokens),
+        () => validateTemperature(temperature),
+        () => validateMessages(dummyMessages),
+    ]
+
+    const isRunButtonDisabled = () => {
+        return !validateMaxTokens(maxTokens) || !validateTemperature(temperature) || !validateMessages(dummyMessages);
+    }
+
+    const isSaveButtonDisabled = () => {
+        if (saveMode) {
+            return !validatePromptName(promptName) || !validateVersion(promptVersion) || !validateMaxTokens(maxTokens) || !validateTemperature(temperature) || !validateMessages(dummyMessages);
+        } else {
+            return !validateMaxTokens(maxTokens) || !validateTemperature(temperature) || !validateMessages(dummyMessages);
+        }
+    }
+
     const handleInputResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         e.target.style.height = "auto"; // Reset height to calculate scrollHeight
         const newHeight = Math.min(e.target.scrollHeight, 16 * 7.5); // 80px = 5rem
@@ -58,11 +88,49 @@ const PromptPlayground: React.FC = () => {
     }
 
     const handleSaveButtonClick = () => {
-        setResponse(null);
-        setPopupMessage("프롬프트를 실행합니다!");
-        setPopupVisible(true);
+    const handleRunButtonClick = async () => {
+        const data = {
+            model: "gpt-3.5-turbo",
+            messages: dummyMessages,
+            temperature: temperature,
+            max_tokens: maxTokens,
+        }
+        try {
+            setResponse(null);
+            setPopupMessage("AI 에게 질문을 던집니다!");
+            setPopupVisible(true);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setPopupVisible(false);
+        }
+    }
+    const handleSaveButtonClick = async () => {
+        // 인풋값 추가 검증
+        if (isSaveButtonDisabled()) {
+            setPopupMessage("모든 필드를 입력해주세요.");
+            setPopupVisible(true);
+            return;
+        }
 
-        api.prompt.createPrompt({
+        if (!saveMode) {
+            setSaveMode(true);
+            setPopupMessage("저장모드로 변경합니다.");
+            setPopupVisible(true);
+            setTimeout(() => {
+                setPopupVisible(false);
+            }, 1000);
+            return;
+        }
+
+        // AI 응답 대기 로딩화면 설정
+        setResponse(null);
+        setPopupMessage("프롬프트를 저장합니다!");
+        setPopupVisible(true);
+        setSaveMode(false);
+
+        // 프롬프트 저장
+        const data = {
             prompt_name: promptName,
             version: promptVersion,
             messages: dummyMessages,
@@ -71,28 +139,44 @@ const PromptPlayground: React.FC = () => {
             model: "gpt-3.5-turbo",
             response_format: "text",
             temperature: temperature,
-        }).then((res) => {
-            console.log(res);
+        }
+
+        try {
+            const res = await api.prompt.createPrompt(data);
             setResponse(res);
-        }).catch((err) => {
+            setPopupMessage("프롬프트가 저장되었습니다.");
+        } catch (err) {
             console.error(err);
-        }).finally(() => {
-            setPopupVisible(false);
-        })
+            setPopupMessage("프롬프트 저장에 실패했습니다.");
+        } finally {
+            // 1초 후 팝업 닫기
+            setTimeout(() => {
+                setPopupVisible(false);
+            }, 1000);
+        }
     }
 
     return (
         <PageLayout>
             <PromptWrapper>
+                <PromptParameterLabel>파라미터</PromptParameterLabel>
                 <PromptSettingWrapper>
-                    <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름"} validate={v => !!v} guideLine={"이름은 필수입니다."} guideColor={"red"}
-                                  onChange={e => setPromptName(e.target.value)}/>
-                    <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()} validate={v => !!v} guideLine={"버전은 필수입니다."} guideColor={"red"}
-                                  onChange={e => setPromptVersion(e.target.value)}/>
-                    <LabeledInput label={"최대 토큰 수"} type={"number"} value={maxTokens} validate={v => Number.isInteger(v) && v > 0} guideLine={"토큰은 정수이며, 0 보다 커야 합니다."} guideColor={"red"}
+                    {/* Parameters */}
+                    {saveMode && (
+                        <>
+                            <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름"} validate={validatePromptName} guideLine={"이름은 필수입니다."} guideColor={"red"}
+                                          onChange={e => setPromptName(e.target.value)}/>
+                            <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()} validate={validateVersion} guideLine={"버전은 필수입니다."} guideColor={"red"}
+                                          onChange={e => setPromptVersion(e.target.value)}/>
+                        </>
+                    )}
+                    <LabeledInput label={"최대 토큰 수"} type={"number"} value={maxTokens} validate={validateMaxTokens} guideLine={"토큰은 정수이며, 0 보다 커야 합니다."} guideColor={"red"}
                                   onChange={e => setMaxTokens(Number(e.target.value))}/>
-                    <LabeledInput label={"창의성"} type={"number"} value={temperature} placeholder={"0~1"} validate={v => !isNaN(v) && v >= 0 && v <= 1} guideLine={"창의성은 0과 1 사이의 숫자입니다."} guideColor={"red"}
+                    <LabeledInput label={"창의성"} type={"number"} value={temperature} placeholder={"0~1"} validate={validateTemperature} guideLine={"창의성은 0과 1 사이의 숫자입니다."} guideColor={"red"}
                                   onChange={e => setTemperature(Number(e.target.value))}/>
+
+                    {/* Messages */}
+                    <MessageLabel>메세지</MessageLabel>
                     <MessagesContainer>
                         {dummyMessages.map((message, index) => {
                             return (
@@ -120,13 +204,13 @@ const PromptPlayground: React.FC = () => {
                     </MessagesContainer>
                 </PromptSettingWrapper>
                 <ButtonWrapper>
-                    <RunButton onClick={handleSaveButtonClick}>실행</RunButton>
-                    <SaveButton onClick={async () => {
-                        // todo
-                    }}>저장</SaveButton>
+                    <RunButton onClick={handleRunButtonClick} disabled={isRunButtonDisabled()}>실행</RunButton>
+                    <SaveButton onClick={handleSaveButtonClick} disabled={isSaveButtonDisabled()}>저장</SaveButton>
+                    {saveMode && <SaveModeCancelButton onClick={() => setSaveMode(false)}>저장모드 해제</SaveModeCancelButton>}
                 </ButtonWrapper>
             </PromptWrapper>
             <PromptResponseWrapper>
+                <AIResponseLabel>AI 응답</AIResponseLabel>
                 <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
             </PromptResponseWrapper>
             {popupVisible && (
@@ -234,6 +318,15 @@ const ButtonWrapper = styled.div`
     height: 3rem;
 `;
 
+const MessageLabel = styled.p`
+    width: 100%;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+`;
+
 
 const MessagesContainer = styled.div`
     width: 100%;
@@ -241,9 +334,7 @@ const MessagesContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0.5rem;
     max-height: 50%;
-    //height: fit-content;
 `;
 
 const Message = styled.div`
@@ -265,6 +356,7 @@ const Content = styled.textarea`
     resize: none;
     overflow: hidden;
     border-radius: 0.8rem;
+    border: 1px solid #ccc;
     padding: 0 0.8rem;
 `;
 
@@ -278,7 +370,7 @@ const Role = styled.select`
 const Option = styled.option``;
 
 const AddMessageButton = styled.button`
-    width: 100%;
+    width: 15%;
     height: 2rem;
     border-radius: 0.8rem;
     border: 1px solid black;
@@ -290,6 +382,12 @@ const ActionButton = styled.button`
     border-radius: 1.5rem;
     height: 3rem;
     margin: 0 0.5rem;
+    cursor: pointer;
+    &:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+    }
 `;
 
 const RunButton = styled(ActionButton)`
@@ -298,11 +396,24 @@ const RunButton = styled(ActionButton)`
 const SaveButton = styled(ActionButton)`
 `;
 
+
+const SaveModeCancelButton = styled(ActionButton)`
+    `;
+const SectionLabel = styled.h2`
+    width: 100%;
+    height: 1rem;
+`
+
+const AIResponseLabel = styled(SectionLabel)``;
+
+const PromptParameterLabel = styled(SectionLabel)``;
+
 const PromptResponse = styled.textarea`
     width: 100%;
     resize: none;
     height: 80%;
     border-radius: 1rem;
+    border: 1px solid #ccc;
     padding: 1rem;
 `
 

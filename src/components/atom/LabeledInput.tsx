@@ -55,6 +55,7 @@ const Label = styled.label`
     height: 70%;
     display: flex;
     align-items: center;
+    font-weight: bold;
 `;
 
 const GuideLine = styled.div<{ $color: string }>`
