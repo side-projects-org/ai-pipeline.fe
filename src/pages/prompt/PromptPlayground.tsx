@@ -52,7 +52,11 @@ const PromptPlayground: React.FC = () => {
             setPromptVersion(prompt.version);
             setMaxTokens(prompt.params.max_completion_tokens);
             setTemperature(prompt.params.temperature);
-            setDummyMessages(prompt.params.messages || []);
+            const temp: any[] = [];
+            prompt.params.messages.forEach((message: any) => {
+                temp.push({ role: message.role, content: message.content});
+            });
+            setDummyMessages(temp);
         } else {
             console.log("No base prompt found, using default values.");
         }
