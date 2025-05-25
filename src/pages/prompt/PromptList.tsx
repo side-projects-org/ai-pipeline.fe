@@ -11,9 +11,8 @@ const PromptList: React.FC = () => {
     // query params 에 값이 있다면, 해당 값으로 기본값 설정
     const query = new URLSearchParams(window.location.search);
 
-
     const [promptName, setPromptName] = React.useState<string>(query.get("promptName") || "");
-    const [version, setVersion] = React.useState<string>(query.get("version") || "");
+    const [version, setVersion] = React.useState<string>("2");
 
     const [promptList, setPromptList] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -29,23 +28,14 @@ const PromptList: React.FC = () => {
         setLoading(true);
         setError(null);
 
-
-        if (!promptName && !!version) {
-            console.log('1')
-            const res = await api.prompt.getAllPromptByVersion(version);
-            setPromptList(res);
-        } else if (!!promptName && !version) {
-            console.log('2')
-            const res = await api.prompt.getAllPromptsByName(promptName);
-            setPromptList(res);
-        } else if (!!promptName && !!version) {
-            console.log('3')
-            const res = await api.prompt.getAllPromptsByName(promptName);
-            setPromptList(res.filter((p: any) => p.version === version));
+        const res = await api.prompt.getAllPromptByVersion(version);
+        if (promptName.trim().length > 0) {
+            const filteredPrompts = res.filter((p: any) => p.prompt_name.includes(promptName));
+            setPromptList(filteredPrompts);
         } else {
-            console.log('4')
-            setPromptList([]);
+            setPromptList(res)
         }
+
 
         setTimeout(() => {
             setLoading(false);
@@ -62,7 +52,7 @@ const PromptList: React.FC = () => {
 
     const handlePromptCardClick = (prompt: any) => {
 
-        navigate(`/prompt/${prompt.prompt_name}/${prompt.version}`);
+        navigate(`/prompt/${prompt.prompt_name}`);
     }
 
     const handleSearch = async () => {
@@ -78,7 +68,6 @@ const PromptList: React.FC = () => {
     return (
         <PageLayout>
             <div>prompt name: <input value={promptName} onChange={handlePromptNameChange}/></div>
-            <div>version: <input value={version} onChange={handleVersionChange}/></div>
             <button onClick={handleSearch}>Search</button>
             {loading && <Popup>검색중입니다.</Popup>}
             {promptList.map(p => {

@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import LabeledInput from "@components/atom/LabeledInput";
 import {v4 as uuidv4} from "uuid";
 import {api} from "@apis/index";
+import {useRecoilValue} from "recoil";
+import {basePromptState} from "@state/BasePromptState";
 
 
 const PromptPlayground: React.FC = () => {
@@ -16,17 +18,11 @@ const PromptPlayground: React.FC = () => {
     const [dummyMessages, setDummyMessages] = React.useState<any[]>([
         {
             role: "user",
-            content: "안녕하세요"
-        },
-        {
-            role: "assistant",
-            content: "안녕하세요! 무엇을 도와드릴까요?"
-        },
-        {
-            role: "user",
             content: "오늘 날씨 어때?"
         },
     ]);
+
+    const prompt = useRecoilValue(basePromptState);
 
     const [popupMessage, setPopupMessage] = React.useState<string>("");
     const [popupVisible, setPopupVisible] = React.useState<boolean>(false);
@@ -48,6 +44,20 @@ const PromptPlayground: React.FC = () => {
             "stream": false,
         }
     }
+
+    useEffect(() => {
+        if (!!prompt) {
+            console.log(prompt);
+            setPromptName(prompt.prompt_name);
+            setPromptVersion(prompt.version);
+            setMaxTokens(prompt.params.max_completion_tokens);
+            setTemperature(prompt.params.temperature);
+            setDummyMessages(prompt.params.messages || []);
+        } else {
+            console.log("No base prompt found, using default values.");
+        }
+    }, []);
+
 
     const validatePromptName = (name: string) => !!name;
 
