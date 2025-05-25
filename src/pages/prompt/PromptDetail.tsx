@@ -4,10 +4,9 @@ import {useNavigate, useParams, useRoutes} from "react-router-dom";
 import {useRecoilState} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
 import styled from "styled-components";
-import {Cancel} from "axios";
 
 
-const PromptVersionList: React.FC = () => {
+const PromptDetail: React.FC = () => {
     const navigate = useNavigate();
     // paths variable 에 값이 있다면, 해당 값으로 기본값 설정
     const { promptName, version } = useParams();
@@ -15,7 +14,7 @@ const PromptVersionList: React.FC = () => {
     const [prompt, setPrompt] = useState<any>(null);
     const [ loading, setLoading ] = useState<boolean>(true);
 
-    const [basePrompt,setBasePrompt] = useRecoilState(basePromptState);
+    const [_, setBasePrompt] = useRecoilState(basePromptState);
 
     useEffect(() => {
         loadingPromptDetail();
@@ -45,8 +44,8 @@ const PromptVersionList: React.FC = () => {
     return (
         <PageLayout>
             {loading ? (
-                <PromptName>{prompt.prompt_name}
-                    <PromptVersion>{prompt.version}</PromptVersion>
+                <PromptName>{promptName}
+                    <PromptVersion>{version} 불러오는 중</PromptVersion>
                 </PromptName>
             ) : (
                 <>
@@ -195,5 +194,5 @@ const Content = styled.div`
     color: #555;
 `;
 
-export default PromptVersionList;
+export default PromptDetail;
 
