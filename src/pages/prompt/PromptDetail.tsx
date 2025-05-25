@@ -43,11 +43,14 @@ const PromptVersionList: React.FC = () => {
     }
 
     return (
-        <>
+        <PageLayout>
             {loading ? (
-                <div>Loading...</div>
+                <PromptName>{prompt.prompt_name}
+                    <PromptVersion>{prompt.version}</PromptVersion>
+                </PromptName>
             ) : (
-                <PageLayout>
+                <>
+
                     <PromptName>{prompt.prompt_name}
                         <PromptVersion>{prompt.version}</PromptVersion>
                     </PromptName>
@@ -75,19 +78,31 @@ const PromptVersionList: React.FC = () => {
                             </Message>
                         ))}
                     </Messages>
-                    {/*<div>{JSON.stringify(prompt, null, 4)}</div>*/}
-                    {/*<button onClick={() => navigate(`/prompt/${promptName}`)}>*/}
-                    {/*    Back to Prompt Versions*/}
-                    {/*</button>*/}
-                    {/*<button onClick={handlePlaygroundClick}>*/}
-                    {/*    Playground*/}
-                    {/*</button>*/}
-                </PageLayout>
+                    <ButtonContainer>
+                        <Nav onClick={handlePlaygroundClick}>플레이그라운드로</Nav>
+                        <Nav onClick={() => navigate(-1)}>목록으로</Nav>
+                    </ButtonContainer>
+                </>
             )}
 
-        </>
+        </PageLayout>
     )
 }
+
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 0.5rem;
+`;
+
+
+const Nav = styled.div`
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+    margin-left: 1rem;
+`;
 
 const PageLayout = styled.div`
     width: 100%;
