@@ -15,6 +15,8 @@ const PromptPlayground: React.FC = () => {
 
     const [saveMode, setSaveMode] = React.useState<boolean>(false);
 
+    const [runCount, setRunCount] = React.useState<number>(0);
+
     const [dummyMessages, setDummyMessages] = React.useState<any[]>([
         {
             role: "user",
@@ -84,6 +86,9 @@ const PromptPlayground: React.FC = () => {
     }
 
     const isSaveButtonDisabled = () => {
+        if (runCount === 0) {
+            return true;
+        }
         if (saveMode) {
             return !validatePromptName(promptName) || !validateVersion(promptVersion) || !validateMaxTokens(maxTokens) || !validateTemperature(temperature) || !validateMessages(dummyMessages);
         } else {
@@ -121,6 +126,7 @@ const PromptPlayground: React.FC = () => {
             console.error(err);
         } finally {
             setPopupVisible(false);
+            setRunCount(prevCount => prevCount + 1);
         }
     }
 
@@ -175,6 +181,26 @@ const PromptPlayground: React.FC = () => {
         }
     }
 
+    const handlePromptNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRunCount(0);
+        setPromptName(e.target.value);
+    }
+
+    const handlePromptVersionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRunCount(0);
+        setPromptVersion(e.target.value);
+    }
+
+    const handleMaxTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRunCount(0);
+        setMaxTokens(Number(e.target.value));
+    }
+
+    const handleTemperatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRunCount(0);
+        setTemperature(Number(e.target.value));
+    }
+
     return (
         <PageLayout>
             <PromptWrapper>
@@ -184,15 +210,15 @@ const PromptPlayground: React.FC = () => {
                     {saveMode && (
                         <>
                             <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름"} validate={validatePromptName} guideLine={"이름은 필수입니다."} guideColor={"red"}
-                                          onChange={e => setPromptName(e.target.value)}/>
+                                          onChange={handlePromptNameChange}/>
                             <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()} validate={validateVersion} guideLine={"버전은 필수입니다."} guideColor={"red"}
-                                          onChange={e => setPromptVersion(e.target.value)}/>
+                                          onChange={handlePromptVersionChange}/>
                         </>
                     )}
                     <LabeledInput label={"최대 토큰 수"} type={"number"} value={maxTokens} validate={validateMaxTokens} guideLine={"토큰은 정수이며, 0 보다 커야 합니다."} guideColor={"red"}
-                                  onChange={e => setMaxTokens(Number(e.target.value))}/>
+                                    onChange={handleMaxTokensChange}/>
                     <LabeledInput label={"창의성"} type={"number"} value={temperature} placeholder={"0~1"} validate={validateTemperature} guideLine={"창의성은 0과 1 사이의 숫자입니다."} guideColor={"red"}
-                                  onChange={e => setTemperature(Number(e.target.value))}/>
+                                    onChange={handleTemperatureChange}/>
 
                     {/* Messages */}
                     <MessageLabel>메세지</MessageLabel>
@@ -200,13 +226,14 @@ const PromptPlayground: React.FC = () => {
                         {dummyMessages.map((message, index) => {
                             return (
                                 <Message key={`${index}`}>
-                                    <Role defaultValue={index % 2 === 0 ? 'user' : 'assistant'}>
+                                    <Role defaultValue={index % 2 === 0 ? 'user' : 'assistant'} onChange={ e => setRunCount(0)}>
                                         <Option value={"user"}>User</Option>
                                         <Option value={"assistant"}>Assistant</Option>
                                     </Role>
                                     <Content
                                         value={message.content}
                                         onChange={e => {
+                                            setRunCount(0);
                                             const newMessages = [...dummyMessages];
                                             newMessages[index].content = e.target.value;
                                             setDummyMessages(newMessages);
