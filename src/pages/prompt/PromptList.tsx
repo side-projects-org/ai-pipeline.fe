@@ -12,7 +12,7 @@ const PromptList: React.FC = () => {
     const query = new URLSearchParams(window.location.search);
 
     const [promptName, setPromptName] = React.useState<string>(query.get("promptName") || "");
-    const [version, setVersion] = React.useState<string>("2");
+    const [version, setVersion] = React.useState<string>("LATEST");
 
     const [promptList, setPromptList] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
