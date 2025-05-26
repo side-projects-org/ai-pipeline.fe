@@ -5,6 +5,7 @@ import {v4 as uuidv4} from "uuid";
 import {api} from "@apis/index";
 import {useRecoilValue} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
+import LabeledSelect from "@components/atom/LabeledSelect";
 
 
 const PromptPlayground: React.FC = () => {
@@ -12,8 +13,10 @@ const PromptPlayground: React.FC = () => {
     const [promptVersion, setPromptVersion] = React.useState<string>("");
     const [maxTokens, setMaxTokens] = React.useState<number>(100);
     const [temperature, setTemperature] = React.useState<number>(1);
+    const [model, setModel] = React.useState<string>("gpt-3.5-turbo");
 
     const [saveMode, setSaveMode] = React.useState<boolean>(false);
+    const [responseSimpleMode, setResponseSimpleMode] = React.useState<boolean>(true);
 
     const [runCount, setRunCount] = React.useState<number>(0);
 
@@ -30,7 +33,7 @@ const PromptPlayground: React.FC = () => {
     const [popupVisible, setPopupVisible] = React.useState<boolean>(false);
 
     const [response, setResponse] = React.useState<object | null>(null);
-    const [responseSimpleMode, setResponseSimpleMode] = React.useState<boolean>(true);
+
 
     const dummyResponse = {
         "key": uuidv4(),
@@ -76,11 +79,6 @@ const PromptPlayground: React.FC = () => {
 
     const validateMessages = (messages: any[]) => messages.length > 0 && messages.every(msg => !!msg.content);
 
-    const validateFunctions = [
-        () => validateMaxTokens(maxTokens),
-        () => validateTemperature(temperature),
-        () => validateMessages(dummyMessages),
-    ]
 
     const isRunButtonDisabled = () => {
         return !validateMaxTokens(maxTokens) || !validateTemperature(temperature) || !validateMessages(dummyMessages);
@@ -109,7 +107,7 @@ const PromptPlayground: React.FC = () => {
 
     const handleRunButtonClick = async () => {
         const data = {
-            model: "gpt-3.5-turbo",
+            model: model,
             messages: dummyMessages,
             temperature: temperature,
             max_tokens: maxTokens,
@@ -162,7 +160,7 @@ const PromptPlayground: React.FC = () => {
             messages: dummyMessages,
             max_tokens: maxTokens,
             max_completion_tokens: maxTokens,
-            model: "gpt-3.5-turbo",
+            model: model,
             response_format: "text",
             temperature: temperature,
         }
@@ -213,6 +211,19 @@ const PromptPlayground: React.FC = () => {
         setResponseSimpleMode(prev => !prev);
     }
 
+    const handleMessageRoleChange = (index: number, newRole: string) => {
+        setRunCount(0);
+        const newMessages = [...dummyMessages];
+        newMessages[index].role = newRole;
+        setDummyMessages(newMessages);
+    }
+
+    const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setRunCount(0);
+        console.log("Selected model:", e.target.value);
+        setModel(e.target.value);
+    }
+
     return (
         <PageLayout>
             <PromptWrapper>
@@ -231,14 +242,17 @@ const PromptPlayground: React.FC = () => {
                                     onChange={handleMaxTokensChange}/>
                     <LabeledInput label={"창의성"} type={"number"} value={temperature} placeholder={"0~1"} validate={validateTemperature} guideLine={"창의성은 0과 1 사이의 숫자입니다."} guideColor={"red"}
                                     onChange={handleTemperatureChange}/>
-
+                    <LabeledSelect label={"모델"} options={[
+                        { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
+                        { value: "gpt-4", label: "GPT-4" }
+                    ]} defaultValue={"gpt-3.5-turbo"} onChange={handleModelChange} height={"3rem"}/>
                     {/* Messages */}
                     <MessageLabel>메세지</MessageLabel>
                     <MessagesContainer>
                         {dummyMessages.map((message, index) => {
                             return (
                                 <Message key={`${index}`}>
-                                    <Role defaultValue={index % 2 === 0 ? 'user' : 'assistant'} onChange={ e => setRunCount(0)}>
+                                    <Role defaultValue={index % 2 === 0 ? 'user' : 'assistant'} onChange={e => handleMessageRoleChange(index, e.target.value)}>
                                         <Option value={"user"}>User</Option>
                                         <Option value={"assistant"}>Assistant</Option>
                                     </Role>
