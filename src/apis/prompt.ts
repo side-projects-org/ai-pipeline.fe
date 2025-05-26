@@ -1,4 +1,4 @@
-import axiosInstance from "@common/axios";
+import { axiosInstance } from "@common/axios";
 import {IPrompt} from "@/types/IPrompt";
 
 

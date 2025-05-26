@@ -1,4 +1,4 @@
-import axiosInstance from "@common/axios";
+import { axiosInstance } from "@common/axios";
 
 
 interface IChatGPTRequest {
@@ -12,7 +12,7 @@ interface IChatGPTRequest {
 }
 
 export const getNewAIResponse = async (data: IChatGPTRequest): Promise<any> => {
-    const res = await axiosInstance.post("/ai", data);
+    const res = await axiosInstance.post("/ai/v2", data);
 
     return res.data;
 }
