@@ -182,7 +182,7 @@ const PromptPlayground: React.FC = () => {
 
     const handlePromptNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRunCount(0);
-        setPromptName(e.target.value);
+        setPromptName(e.target.value.toUpperCase());
     }
 
     const handlePromptVersionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,7 +232,7 @@ const PromptPlayground: React.FC = () => {
                     {/* Parameters */}
                     {saveMode && (
                         <>
-                            <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름"} validate={validatePromptName} guideLine={"이름은 필수입니다."} guideColor={"red"}
+                            <LabeledInput label={"이름"} type={"text"} value={promptName} placeholder={"프롬프트 이름(영어로 작성해주세요)"} validate={validatePromptName} guideLine={"이름은 필수입니다. 영어로 작성해주세요."} guideColor={"red"}
                                           onChange={handlePromptNameChange}/>
                             <LabeledInput label={"버전"} type={"text"} value={promptVersion} placeholder={new Date().toISOString()} validate={validateVersion} guideLine={"버전은 필수입니다."} guideColor={"red"}
                                           onChange={handlePromptVersionChange}/>
