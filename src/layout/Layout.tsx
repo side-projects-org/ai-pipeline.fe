@@ -26,7 +26,6 @@ const LayoutContainer = styled.div`
 
 const Main = styled.main`
     flex: 1;
-    min-height: calc(100% - 60px); /* Adjust based on header/footer height */
 `;
 
 

@@ -371,12 +371,12 @@ const Section = styled.section`
 const PromptWrapper = styled(Section)`
     width: 50%;
     justify-content: space-between;
+    height: 100%;
 `;
 
 const PromptResponseWrapper = styled(Section)`
     width: 50%;
     height: 100%;
-    
 `;
 
 const PromptSettingWrapper = styled.div`
@@ -386,6 +386,7 @@ const PromptSettingWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    max-height: 100%;
 `;
 
 const ButtonWrapper = styled.div`
@@ -413,12 +414,15 @@ const MessagesContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 50%;
+    max-height: 40vh;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
 `;
 
 const Message = styled.div`
     width: 100%;
-    min-height: 3rem;
+    height: 3rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -463,7 +467,7 @@ const Option = styled.option``;
 
 const AddMessageButton = styled.button`
     width: 15%;
-    height: 2rem;
+    min-height: 2rem;
     border-radius: 0.8rem;
     border: 1px solid black;
     margin: 0.5rem 0;
