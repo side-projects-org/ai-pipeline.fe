@@ -95,6 +95,10 @@ const PromptCard = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    &:hover {
+        background-color: #f0f0f0;
+    }
 `;
 
 const Popup = styled.div`
@@ -116,7 +120,6 @@ const PageLayout = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 0.5rem 0;
-    background: beige;
     // 페이지가 전체가 차게
 `;
 
