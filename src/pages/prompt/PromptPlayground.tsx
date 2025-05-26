@@ -201,6 +201,13 @@ const PromptPlayground: React.FC = () => {
         setTemperature(Number(e.target.value));
     }
 
+    const handleDeleteMessageButtonClick = (index: number) => {
+        setRunCount(0);
+        const newMessages = [...dummyMessages];
+        newMessages.splice(index, 1);
+        setDummyMessages(newMessages);
+    }
+
     return (
         <PageLayout>
             <PromptWrapper>
@@ -240,6 +247,7 @@ const PromptPlayground: React.FC = () => {
                                             handleInputResize(e);
                                         }}
                                     />
+                                    <DeleteMessageButton onClick={() => handleDeleteMessageButtonClick(index)}>x</DeleteMessageButton>
                                 </Message>
                             );
                         })}
@@ -391,6 +399,19 @@ const Message = styled.div`
     align-items: center;
     justify-content: center;
     margin: 0 0 1rem 0;
+`;
+
+const DeleteMessageButton = styled.button`
+    width: 1.5rem;
+    height: 100%;
+    border-radius: 0.2rem;
+    border: 1px solid black;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    background-color: #fff;
+    &:hover {
+        background-color: #f0f0f0;
+    }
 `;
 
 
