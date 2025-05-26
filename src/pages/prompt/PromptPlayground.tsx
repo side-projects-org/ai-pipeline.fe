@@ -270,12 +270,12 @@ const PromptPlayground: React.FC = () => {
             </PromptWrapper>
             <PromptResponseWrapper>
                 <AIResponseLabel>AI 응답</AIResponseLabel>
-                <ResponseDisplayModeButton onClick={handleResponseSimpleModeClick}>{responseSimpleMode ? "전체 보기" : "간단히 보기"}</ResponseDisplayModeButton>
                 {responseSimpleMode ? (
                     <PromptResponse value={response ? (response as any).response.choices[0].message.content : ""}/>
                 ) : (
                     <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
                 )}
+                {response && <ResponseDisplayModeButton onClick={handleResponseSimpleModeClick}>{responseSimpleMode ? "전체 보기" : "간단히 보기"}</ResponseDisplayModeButton>}
 
             </PromptResponseWrapper>
             {popupVisible && (
