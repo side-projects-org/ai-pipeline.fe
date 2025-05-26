@@ -30,6 +30,7 @@ const PromptPlayground: React.FC = () => {
     const [popupVisible, setPopupVisible] = React.useState<boolean>(false);
 
     const [response, setResponse] = React.useState<object | null>(null);
+    const [responseSimpleMode, setResponseSimpleMode] = React.useState<boolean>(true);
 
     const dummyResponse = {
         "key": uuidv4(),
@@ -208,6 +209,10 @@ const PromptPlayground: React.FC = () => {
         setDummyMessages(newMessages);
     }
 
+    const handleResponseSimpleModeClick = () => {
+        setResponseSimpleMode(prev => !prev);
+    }
+
     return (
         <PageLayout>
             <PromptWrapper>
@@ -265,7 +270,13 @@ const PromptPlayground: React.FC = () => {
             </PromptWrapper>
             <PromptResponseWrapper>
                 <AIResponseLabel>AI 응답</AIResponseLabel>
-                <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
+                <ResponseDisplayModeButton onClick={handleResponseSimpleModeClick}>{responseSimpleMode ? "전체 보기" : "간단히 보기"}</ResponseDisplayModeButton>
+                {responseSimpleMode ? (
+                    <PromptResponse value={response ? (response as any).response.choices[0].message.content : ""}/>
+                ) : (
+                    <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
+                )}
+
             </PromptResponseWrapper>
             {popupVisible && (
                 <PopupWrapper>
@@ -472,6 +483,22 @@ const SectionLabel = styled.h2`
 `
 
 const AIResponseLabel = styled(SectionLabel)``;
+
+const ResponseDisplayModeButton = styled.button`
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    height: 1rem;
+    border-radius: 0.8rem;
+    border: none;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: #333;
+    background: white;
+    &:hover {
+        font-weight: bold;
+    }
+`;
 
 const PromptParameterLabel = styled(SectionLabel)``;
 
