@@ -27,6 +27,8 @@ const PromptPlayground: React.FC = () => {
         },
     ]);
 
+    const [resType, setResType] = React.useState<"ai_response" | "prompt">("ai_response");
+
     const prompt = useRecoilValue(basePromptState);
 
     const [popupMessage, setPopupMessage] = React.useState<string>("");
@@ -167,7 +169,7 @@ const PromptPlayground: React.FC = () => {
 
         try {
             const res = await api.prompt.createPrompt(data);
-            setResponseSimpleMode(false); // 나중에 고쳐라
+            setResType("prompt");
             setResponse(res);
             setPopupMessage("프롬프트가 저장되었습니다.");
         } catch (err) {
@@ -285,12 +287,12 @@ const PromptPlayground: React.FC = () => {
             </PromptWrapper>
             <PromptResponseWrapper>
                 <AIResponseLabel>AI 응답</AIResponseLabel>
-                {responseSimpleMode ? (
+                { resType === "ai_response" && responseSimpleMode ? (
                     <PromptResponse value={response ? (response as any).response.choices[0].message.content : ""}/>
                 ) : (
                     <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
                 )}
-                {response && <ResponseDisplayModeButton onClick={handleResponseSimpleModeClick}>{responseSimpleMode ? "전체 보기" : "간단히 보기"}</ResponseDisplayModeButton>}
+                {response && resType === "ai_response" && <ResponseDisplayModeButton onClick={handleResponseSimpleModeClick}>{responseSimpleMode ? "전체 보기" : "간단히 보기"}</ResponseDisplayModeButton>}
 
             </PromptResponseWrapper>
             {popupVisible && (
