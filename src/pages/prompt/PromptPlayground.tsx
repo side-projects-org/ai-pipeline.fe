@@ -167,6 +167,7 @@ const PromptPlayground: React.FC = () => {
 
         try {
             const res = await api.prompt.createPrompt(data);
+            setResponseSimpleMode(false); // 나중에 고쳐라
             setResponse(res);
             setPopupMessage("프롬프트가 저장되었습니다.");
         } catch (err) {
