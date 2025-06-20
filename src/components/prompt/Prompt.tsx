@@ -21,9 +21,7 @@ const Prompt = ({promptName, version, editable=false}: IPromptKeyProps) => {
     const [_, setBasePrompt] = useRecoilState(basePromptState);
 
     useEffect(() => {
-        setTimeout(() => {
-            loadingPromptDetail();
-        }, 1000)
+        loadingPromptDetail();
     }, [promptName, version]);
 
 

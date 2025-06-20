@@ -14,9 +14,7 @@ const AiResponseList = ({promptName, version}: IPromptKeyProps) => {
     const [aiResponseList, setAiResponseList] = useState<any[]>(new Array(10).fill({q: 1}));
 
     useEffect(() => {
-        setTimeout(() => {
-            loadingAiResponseList();
-        }, 2000);
+        loadingAiResponseList();
     }, []);
 
 

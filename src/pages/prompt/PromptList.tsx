@@ -36,10 +36,7 @@ const PromptList: React.FC = () => {
             setPromptList(res)
         }
 
-
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
+        setLoading(false);
     }
 
     const handlePromptNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
