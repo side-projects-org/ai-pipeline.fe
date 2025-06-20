@@ -1,5 +1,5 @@
 import { axiosInstance } from "@common/axios";
-import {IPrompt} from "@/types/IPrompt";
+import {IPrompt} from "@/types/prompt";
 
 
 export const getAllPromptsByName = async (promptName: string): Promise<IPrompt[]> => {
