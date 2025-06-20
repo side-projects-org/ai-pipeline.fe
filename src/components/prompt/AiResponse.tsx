@@ -2,21 +2,21 @@ import styled from "styled-components";
 import React, {useEffect, useState} from "react";
 import {api} from "@apis/index";
 
-interface IAIResponseProps {
+interface IAiResponseProps {
     response: any;
     index: number;
 
 }
 
-const AIResponse = ({index, response}: IAIResponseProps) => {
+const AiResponse = ({index, response}: IAiResponseProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [prompt, setPrompt] = useState<any>(null);
 
     return (
-        <AIResponseWrapper key={index+1}>
+        <AiResponseWrapper key={index+1}>
             <Index>{index+1}</Index>
             <Response>{JSON.stringify(response)}</Response>
-        </AIResponseWrapper>
+        </AiResponseWrapper>
     );
 }
 
@@ -27,7 +27,7 @@ const Response = styled.div`
 `;
 
 
-const AIResponseWrapper = styled.div`
+const AiResponseWrapper = styled.div`
     height: 20rem;
     min-width: 20rem;
     border: 1px solid #ccc;
@@ -41,4 +41,4 @@ const Index = styled.div`
 `;
 
 
-export default AIResponse;
+export default AiResponse;

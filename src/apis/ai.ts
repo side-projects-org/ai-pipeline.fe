@@ -11,13 +11,13 @@ interface IChatGPTRequest {
     max_tokens: number;
 }
 
-export const getNewAIResponse = async (data: IChatGPTRequest): Promise<any> => {
+export const getNewAiResponse = async (data: IChatGPTRequest): Promise<any> => {
     const res = await axiosInstance.post("/ai/v2", data);
 
     return res.data;
 }
 
-export const getAllAIResponseByPrompt = async (promptName: string, version: string): Promise<any> => {
+export const getAllAiResponseByPrompt = async (promptName: string, version: string): Promise<any> => {
     const res = await axiosInstance.get(`/ai-response`, {
         params: {
             prompt_name: promptName,

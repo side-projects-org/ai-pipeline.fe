@@ -5,8 +5,7 @@ import {useRecoilState} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
 import styled from "styled-components";
 import Prompt from "@components/prompt/Prompt";
-import AIResponse from "@components/prompt/AIResponse";
-import AIResponseList from "@components/prompt/AIResponseList";
+import AiResponseList from "@components/prompt/AiResponseList";
 
 
 const PromptDetail: React.FC = () => {
@@ -57,44 +56,11 @@ const PromptDetail: React.FC = () => {
             {/*        ))}*/}
             {/*    </RequiredParamsContainer>*/}
             {/*</PromptTestContainer>*/}
-            <AIResponseList version={version} promptName={promptName}/>
+            <AiResponseList version={version} promptName={promptName}/>
 
         </PageLayout>
     )
 }
-
-const PromptTestContainer = styled.div`
-    `;
-
-const RequiredParamsContainer = styled.div`
-    `;
-
-const RequireParam = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 4px;
-    width: 100%;
-    height: 3rem;
-`;
-
-const Index = styled.div`
-    right: 50%;
-    bottom: -1rem;
-    position: absolute;
-`;
-
-const AIResponseContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    overflow-x: auto;
-    height: 22rem;
-    column-gap: 1rem;
-`;
-
 
 
 const PageLayout = styled.div`

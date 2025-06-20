@@ -6,6 +6,7 @@ import {api} from "@apis/index";
 import {useRecoilValue} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
 import LabeledSelect from "@components/atom/LabeledSelect";
+import {ICreatePromptRes, IPostLlmRes} from "@/types/prompt";
 
 
 const PromptPlayground: React.FC = () => {
@@ -34,7 +35,7 @@ const PromptPlayground: React.FC = () => {
     const [popupMessage, setPopupMessage] = React.useState<string>("");
     const [popupVisible, setPopupVisible] = React.useState<boolean>(false);
 
-    const [response, setResponse] = React.useState<object | null>(null);
+    const [response, setResponse] = React.useState<IPostLlmRes | ICreatePromptRes |  null>(null);
 
 
     const dummyResponse = {
@@ -120,7 +121,7 @@ const PromptPlayground: React.FC = () => {
             setPopupMessage("AI 에게 질문을 던집니다!");
             setPopupVisible(true);
 
-            const res = await api.ai.getNewAIResponse(data);
+            const res = await api.ai.getNewAiResponse(data);
 
             setResponse(res);
         } catch (err) {
@@ -286,9 +287,9 @@ const PromptPlayground: React.FC = () => {
                 </ButtonWrapper>
             </PromptWrapper>
             <PromptResponseWrapper>
-                <AIResponseLabel>AI 응답</AIResponseLabel>
-                { resType === "ai_response" && responseSimpleMode ? (
-                    <PromptResponse value={response ? (response as any).response.choices[0].message.content : ""}/>
+                <AiResponseLabel>AI 응답</AiResponseLabel>
+                {resType === "ai_response" && responseSimpleMode ? (
+                    <PromptResponse value={(response as IPostLlmRes)?.response.choices?.[0]?.message?.content || ""}/>
                 ) : (
                     <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
                 )}
@@ -503,7 +504,7 @@ const SectionLabel = styled.h2`
     height: 1rem;
 `
 
-const AIResponseLabel = styled(SectionLabel)``;
+const AiResponseLabel = styled(SectionLabel)``;
 
 const ResponseDisplayModeButton = styled.button`
     display: flex;

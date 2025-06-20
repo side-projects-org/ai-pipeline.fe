@@ -3,7 +3,7 @@ export interface IPrompt {
     prompt_name: string;
     version: string;
 
-    params: IAIRequestParams;
+    params: IAiRequestParams;
 
     applied_version?: string;
     updated_at: string;  // Date 변환 어떻게?
@@ -18,39 +18,39 @@ export interface IPrompt {
     key: string;
 }
 
-export interface IAIMessage {
+export interface IAiMessage {
     role: 'user' | 'assistant' | 'system';
     content: string;
 }
 
-export interface IAIRequestParams {
+export interface IAiRequestParams {
     model: string;
     temperature?: number;
     max_tokens?: number;
     max_completion_tokens?: number;
-    messages?: IAIMessage[];
+    messages?: IAiMessage[];
     response_format?: string;
     prompt?: string; // for image generation
 }
 
 
-export interface IAIChoice {
+export interface IAiChoice {
     index: number;
-    message: IAIMessage;
+    message: IAiMessage;
     finish_reason?: string;
 };
 
-export interface IGPTAIResponse {
+export interface IAiAnswer {
     id: string;
     object?: string;
     created?: number;
     model?: string;
-    choices?: IAIChoice[];
-    usage?: IGPTAIUsage;
+    choices?: IAiChoice[];
+    usage?: IGptAiUsage;
 }
 
 
-export interface IGPTAIUsage {
+export interface IGptAiUsage {
     completion_tokens: number;
     prompt_tokens: number;
     total_tokens: number;
@@ -68,11 +68,36 @@ export interface IGPTAIUsage {
     };
 }
 
-export interface AIResponse {
+export interface IAiResponse {
     prompt_name: string;
     version: string;
+    item_type: string;
 
-    params: IAIRequestParams;
+    pk: string;
+    sk: string;
+    key: string;
 
-    response: IGPTAIResponse;
+    params: IAiRequestParams;
+    answer: IAiAnswer;
 }
+
+export interface IPostLlmRes {
+    response: IAiAnswer;
+    params: IAiRequestParams;
+}
+
+export interface ICreatePromptReq {
+    prompt_name: string;
+    version: string;
+    messages: IAiMessage[];
+    max_tokens: number;
+    max_completion_tokens: number;
+    model: string;
+    response_format: string;
+    temperature: number;
+
+    best_ai?: string;
+    best_model?: string;
+}
+
+export interface ICreatePromptRes extends IPrompt {}

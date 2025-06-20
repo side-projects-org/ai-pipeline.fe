@@ -1,5 +1,5 @@
 import { axiosInstance } from "@common/axios";
-import {IPrompt} from "@/types/prompt";
+import {ICreatePromptReq, ICreatePromptRes, IPrompt} from "@/types/prompt";
 
 
 export const getAllPromptsByName = async (promptName: string): Promise<IPrompt[]> => {
@@ -23,12 +23,8 @@ export const getAllPromptByVersion = async (version: string): Promise<IPrompt[]>
 }
 
 
-interface ICreatePrompt {
 
-}
-
-
-export const createPrompt = async (data: ICreatePrompt): Promise<IPrompt> => {
+export const createPrompt = async (data: ICreatePromptReq): Promise<ICreatePromptRes> => {
     const res = await axiosInstance.put("/prompt", data);
     return res.data;
 }
