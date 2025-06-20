@@ -4,104 +4,98 @@ import {useNavigate, useParams, useRoutes} from "react-router-dom";
 import {useRecoilState} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
 import styled from "styled-components";
+import Prompt from "@components/prompt/Prompt";
+import AIResponse from "@components/prompt/AIResponse";
+import AIResponseList from "@components/prompt/AIResponseList";
 
 
 const PromptDetail: React.FC = () => {
     const navigate = useNavigate();
     // paths variable 에 값이 있다면, 해당 값으로 기본값 설정
-    const { promptName, version } = useParams();
+    const {promptName, version} = useParams();
 
-    const [prompt, setPrompt] = useState<any>(null);
-    const [ loading, setLoading ] = useState<boolean>(true);
 
-    const [_, setBasePrompt] = useRecoilState(basePromptState);
 
-    useEffect(() => {
-        loadingPromptDetail();
-    }, []);
 
-    const loadingPromptDetail = async () => {
-        if (!promptName || !version) {
-            return;
-        }
 
-        const res = await api.prompt.getAllPromptsByName(promptName);
-        if (res.length === 0 || !res.some((p: any) => p.version === version)) {
-            alert("해당 프롬프트가 존재하지 않습니다. 이전 페이지로 돌아갑니다.");
-            navigate(-1);
-            return;
-        }
-
-        setPrompt(res.find((p: any) => p.version === version));
-        setLoading(false);
-    }
-
-    const handlePlaygroundClick = () => {
-        setBasePrompt(prompt);
-        navigate('/prompt/playground')
-    }
+    // const getRequiredParams = () => {
+    //     if (!prompt || !prompt.params) {
+    //         return [];
+    //     }
+    //
+    //     const requiredParams: any[] = [];
+    //     const messages = prompt.params.messages || [];
+    //
+    //     messages.forEach((message: any) => {
+    //         if (message.role === 'user' && message.content) {
+    //             // 모든 {variable} 형태의 변수를 찾아서 requiredParams에 추가
+    //             const regex = /{{(.*?)}}/g;
+    //             let match;
+    //             while ((match = regex.exec(message.content)) !== null) {
+    //                 const paramName = match[1].trim();
+    //                 if (paramName && !requiredParams.includes(paramName)) {
+    //                     requiredParams.push(paramName);
+    //                 }
+    //             }
+    //         }
+    //     });
+    //
+    //     return requiredParams;
+    // }
 
     return (
         <PageLayout>
-            {loading ? (
-                <PromptName>{promptName}
-                    <PromptVersion>{version} 불러오는 중</PromptVersion>
-                </PromptName>
-            ) : (
-                <>
+            <Prompt promptName={promptName} version={version} editable={true}></Prompt>
 
-                    <PromptName>{prompt.prompt_name}
-                        <PromptVersion>{prompt.version}</PromptVersion>
-                    </PromptName>
-
-                    <Params>
-                        <Param>
-                            <Label>Max Completion Tokens</Label>
-                            <Value>{prompt.params?.max_completion_tokens}</Value>
-                        </Param>
-                        <Param>
-                            <Label>Temperature</Label>
-                            <Value>{prompt.params?.temperature}</Value>
-                        </Param>
-                        <Param>
-                            <Label>Created At</Label>
-                            <Value>{prompt.created_at ? new Date(prompt.created_at).toLocaleString() : "N/A"}</Value>
-                        </Param>
-                    </Params>
-                    <MessageLabel>Messages</MessageLabel>
-                    <Messages>
-                        {prompt.params?.messages.map((message: any, index: number) => (
-                            <Message>
-                                <Role>{message.role}</Role>
-                                <Content>{message.content}</Content>
-                            </Message>
-                        ))}
-                    </Messages>
-                    <ButtonContainer>
-                        <Nav onClick={handlePlaygroundClick}>플레이그라운드로</Nav>
-                        <Nav onClick={() => navigate(-1)}>목록으로</Nav>
-                    </ButtonContainer>
-                </>
-            )}
+            {/*<PromptTestContainer>*/}
+            {/*    <RequiredParamsContainer>*/}
+            {/*        {getRequiredParams().map((param: string, index: number) => (*/}
+            {/*            <RequireParam key={index}>*/}
+            {/*                <div>{param}</div>*/}
+            {/*                <input type="text" placeholder={`Enter value for ${param}`} />*/}
+            {/*            </RequireParam>*/}
+            {/*        ))}*/}
+            {/*    </RequiredParamsContainer>*/}
+            {/*</PromptTestContainer>*/}
+            <AIResponseList version={version} promptName={promptName}/>
 
         </PageLayout>
     )
 }
 
-const ButtonContainer = styled.div`
+const PromptTestContainer = styled.div`
+    `;
+
+const RequiredParamsContainer = styled.div`
+    `;
+
+const RequireParam = styled.div`
     display: flex;
-    justify-content: flex-end;
-    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+    height: 3rem;
+`;
+
+const Index = styled.div`
+    right: 50%;
+    bottom: -1rem;
+    position: absolute;
+`;
+
+const AIResponseContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow-x: auto;
+    height: 22rem;
+    column-gap: 1rem;
 `;
 
 
-const Nav = styled.div`
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-    margin-left: 1rem;
-`;
 
 const PageLayout = styled.div`
     width: 100%;
@@ -112,86 +106,6 @@ const PageLayout = styled.div`
     align-items: flex-start;
     padding: 0.5rem 0;
     // 페이지가 전체가 차게
-`;
-
-const PromptName = styled.div`
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding-left: 0.5rem;
-    margin-bottom: 1rem;
-`;
-
-const PromptVersion = styled.span`
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 600;
-    padding-left: 0.5rem;
-    color: #555;
-`;
-
-const Params = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-`;
-
-const MessageLabel = styled.div`
-    font-weight: bold;
-    color: #333;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    padding-left: 0.5rem;
-`;
-
-const Param = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    //background-color: #f9f9f9;
-    border-radius: 4px;
-    width: 100%;
-    height: 3rem;
-`;
-
-const Label = styled.div`
-    width: 30%;
-`;
-
-const Value = styled.div`
-    border: 1px solid #ccc;
-    width: 70%;
-    padding: 0.5rem;
-    border-radius: 1rem;
-`;
-
-const Messages = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-`;
-
-const Message = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-`;
-
-const Role = styled.div`
-    font-weight: bold;
-    color: #333;
-`;
-
-
-const Content = styled.div`
-    margin-top: 0.5rem;
-    color: #555;
 `;
 
 export default PromptDetail;
