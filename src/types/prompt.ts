@@ -82,7 +82,7 @@ export interface IAiResponse {
 }
 
 export interface IPostLlmRes {
-    response: IAiAnswer;
+    answer: IAiAnswer;
     params: IAiRequestParams;
 }
 

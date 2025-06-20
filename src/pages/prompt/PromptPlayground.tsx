@@ -289,7 +289,7 @@ const PromptPlayground: React.FC = () => {
             <PromptResponseWrapper>
                 <AiResponseLabel>AI 응답</AiResponseLabel>
                 {resType === "ai_response" && responseSimpleMode ? (
-                    <PromptResponse value={(response as IPostLlmRes)?.response.choices?.[0]?.message?.content || ""}/>
+                    <PromptResponse value={(response as IPostLlmRes)?.answer.choices?.[0]?.message?.content || ""}/>
                 ) : (
                     <PromptResponse value={response ? JSON.stringify(response, null, 4) : ""}/>
                 )}
