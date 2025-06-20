@@ -16,3 +16,14 @@ export const getNewAIResponse = async (data: IChatGPTRequest): Promise<any> => {
 
     return res.data;
 }
+
+export const getAllAIResponseByPrompt = async (promptName: string, version: string): Promise<any> => {
+    const res = await axiosInstance.get(`/ai-response`, {
+        params: {
+            prompt_name: promptName,
+            version: version
+        }
+    });
+
+    return res.data;
+}

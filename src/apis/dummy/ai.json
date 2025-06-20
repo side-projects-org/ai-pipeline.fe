@@ -36,5 +36,6 @@
         "total_tokens": 20
       }
     }
-  }
+  },
+  "getAllAIResponseByPrompt": {}
 }

@@ -1,3 +1,5 @@
+import {getAllAIResponseByPrompt} from "@apis/ai";
+
 export const useDummy = {
     prompt: {
         getAllPromptsByName: false,
@@ -7,7 +9,8 @@ export const useDummy = {
     },
     ai: {
         getNewAIResponse: false,
-        getAllAIResponse: false
+        getAllAIResponse: false,
+        getAllAIResponseByPrompt: false,
         // getNewAIResponseStream: false,
     }
 }
