@@ -56,31 +56,6 @@ const PromptDetail: React.FC = () => {
             .then(setAiResponseList);
     }, []);
 
-    // const getRequiredParams = () => {
-    //     if (!prompt || !prompt.params) {
-    //         return [];
-    //     }
-    //
-    //     const requiredParams: any[] = [];
-    //     const messages = prompt.params.messages || [];
-    //
-    //     messages.forEach((message: any) => {
-    //         if (message.role === 'user' && message.content) {
-    //             // 모든 {variable} 형태의 변수를 찾아서 requiredParams에 추가
-    //             const regex = /{{(.*?)}}/g;
-    //             let match;å
-    //             while ((match = regex.exec(message.content)) !== null) {
-    //                 const paramName = match[1].trim();
-    //                 if (paramName && !requiredParams.includes(paramName)) {
-    //                     requiredParams.push(paramName);
-    //                 }
-    //             }
-    //         }
-    //     });
-    //
-    //     return requiredParams;
-    // }
-
     return (
         <PageLayout>
             {prompt && <PromptViewer prompt={prompt} />}

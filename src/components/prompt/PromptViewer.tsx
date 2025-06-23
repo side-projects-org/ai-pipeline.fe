@@ -1,15 +1,87 @@
 import styled from "styled-components";
-import React from "react";
+import React, {useState} from "react";
 import {useRecoilState} from "recoil";
 import {basePromptState} from "@state/BasePromptState";
 import {useNavigate} from "react-router-dom";
-import {IPrompt} from "@/types/prompt";
+import {IAiMessage, IPrompt} from "@/types/prompt";
+import LabeledInput from "@components/atom/LabeledInput";
+import {api} from "@apis/index";
+import {postAiResponse} from "@apis/aiResponse";
 
 interface IPromptKeyProps {
     prompt: IPrompt;
 }
 
 const PromptViewer = ({prompt}: IPromptKeyProps) => {
+    const [variableMap, setVariableMap] = useState<Map<string, string>>(new Map());
+    const [isRunning, setIsRunning] = useState<boolean>(false);
+
+
+    const isRunnable = (prompt: IPrompt, variables: Map<string, string>): boolean => {
+        let runnable = true;
+
+        if (!prompt.params || !prompt.params.messages || prompt.params.messages.length === 0) {
+            runnable = false;
+        }
+
+        variables.forEach((value, key) => {
+            if (value.trim() === '') {
+                runnable = false;
+            }
+        });
+
+        return runnable;
+    }
+
+    const handleRunButtonClick = async () => {
+        if (isRunning) {
+            alert("이미 실행 중입니다.");
+            return;
+        }
+
+
+        // prompt.params.messages 에 variableMap 의 값을 적용하여 prompt 클론 제작 및 실행
+        const clonedPrompt = {...prompt};
+        clonedPrompt.params = {...clonedPrompt.params, messages: clonedPrompt.params?.messages?.map(msg => {
+            const newContent = msg.content.replace(/{(.*?)}/g, (match, p1) => {
+                return variableMap.get(p1) || match;
+            });
+            return {...msg, content: newContent};
+        })};
+
+        setIsRunning(true);
+        const llmRes = await api.ai.getNewAiResponse({
+            model: clonedPrompt.params?.model || 'gpt-3.5-turbo',
+            messages: clonedPrompt.params?.messages || [],
+            temperature: clonedPrompt.params?.temperature || 0.7,
+            max_tokens: clonedPrompt.params?.max_completion_tokens || 1000,
+            max_completion_tokens: clonedPrompt.params?.max_completion_tokens || 1000,
+        });
+
+        setIsRunning(false);
+
+        const saveAiResponseRes = await api.aiResponse.postAiResponse({
+            prompt_name: clonedPrompt.prompt_name,
+            version: clonedPrompt.version,
+            answer: llmRes.answer,
+            variables: Object.fromEntries(variableMap.entries()),
+        })
+
+        console.log(saveAiResponseRes);
+
+        alert(JSON.stringify(saveAiResponseRes, null, 2));
+
+
+    }
+
+    const handleVariableChange = (key: string, value: string) => {
+        const newMap = new Map(variableMap);
+        newMap.set(key, value);
+        setVariableMap(newMap);
+
+        console.log(newMap);
+    };
+
     const navigate = useNavigate();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,9 +94,7 @@ const PromptViewer = ({prompt}: IPromptKeyProps) => {
 
     return (
         <PromptWrapper>
-                    <PromptName>{prompt.prompt_name}
-            <PromptVersion>{prompt.version}</PromptVersion>
-        </PromptName>
+            <PromptName>{prompt.prompt_name}<PromptVersion>{prompt.version}</PromptVersion></PromptName>
             <Params>
                 <Param>
                     <Label>Max Completion Tokens</Label>
@@ -39,21 +109,105 @@ const PromptViewer = ({prompt}: IPromptKeyProps) => {
                     <Value>{prompt.created_at ? new Date(prompt.created_at).toLocaleString() : "N/A"}</Value>
                 </Param>
             </Params>
-            <MessageLabel>Messages</MessageLabel>
-            <Messages>
-                {prompt.params.messages?.map((message: any, index: number) => (
-                    <Message>
-                        <Role>{message.role}</Role>
-                        <Content>{message.content}</Content>
-                    </Message>
-                ))}
-            </Messages>
+            <MessagesContainer
+                messages={prompt.params?.messages || []}
+                onVariableChange={handleVariableChange}
+                variableMap={variableMap}/>
             <ButtonContainer>
+                <RunButton disabled={!isRunnable(prompt, variableMap)} onClick={handleRunButtonClick}>실행</RunButton>
                 <Nav onClick={handlePlaygroundClick}>플레이그라운드로</Nav>
             </ButtonContainer>
+            {isRunning && (
+                <LoadingBackground>
+                    <LoadingContent>
+                        실행 중입니다.
+                    </LoadingContent>
+                </LoadingBackground>
+            )}
         </PromptWrapper>
     );
 }
+
+const LoadingBackground = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+
+const LoadingContent = styled.div`
+    background-color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+interface IMessagesContainerProps {
+    messages: IAiMessage[];
+    onVariableChange: (key: string, value: string) => void;
+    variableMap: Map<string, string>;
+}
+
+const MessagesContainer = ({messages, variableMap, onVariableChange}: IMessagesContainerProps) => {
+    const allVariables = React.useMemo(() => {
+        const varSet = new Set<string>();
+        const regex = /{(.*?)}/g;
+
+        messages.forEach(message => {
+            let match;
+            while ((match = regex.exec(message.content)) !== null) {
+                varSet.add(match[1]);
+            }
+        });
+
+        return Array.from(varSet);
+    }, [messages]);
+
+    return (
+        <Messages>
+            <Label>Messages</Label>
+            {messages.map((msg, idx) => (
+                <>
+                    <Message>
+                        <Role key={`role-${idx}`}>{msg.role}</Role>
+                        <Content key={`content-${idx}`}>
+                            {msg.content}
+                        </Content>
+                    </Message>
+                </>
+            ))}
+
+            <Label>Variables</Label>
+            {allVariables.map((variable) => (
+                <LabeledInput
+                    label={variable}
+                    type={"text"}
+                    value={variableMap.get(variable) || ''}
+                    onChange={e => onVariableChange(variable, e.target.value)}
+                    height={"3.5rem"}
+                />
+            ))}
+        </Messages>
+    );
+
+};
+
+const VariableContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+`;
 
 
 const ButtonContainer = styled.div`
@@ -63,12 +217,38 @@ const ButtonContainer = styled.div`
     padding: 0.5rem;
 `;
 
+const RunButton = styled.button`
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 1rem;
+    &:hover {
+        background-color: #0056b3;
+    }
+    
+    &:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+`;
+
 
 const Nav = styled.div`
-    cursor: pointer;
+    background-color: white;
     color: #007bff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
     font-weight: bold;
-    margin-left: 1rem;
+    
+    &:hover {
+        background-color: #0056b3;
+    }
 `;
 
 
@@ -140,6 +320,7 @@ const Messages = styled.div`
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
+    padding: 0.5rem;
 `;
 
 const Message = styled.div`
