@@ -79,6 +79,7 @@ export interface IAiResponse {
 
     params: IAiRequestParams;
     answer: IAiAnswer;
+    variables: Record<string, any>;
 }
 
 export interface IPostLlmRes {
