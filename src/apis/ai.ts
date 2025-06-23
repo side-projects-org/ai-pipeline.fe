@@ -1,5 +1,6 @@
 import { axiosInstance } from "@common/axios";
 import {IAiResponse, IPostLlmRes} from "@/types/prompt";
+import AiResponseList from "@components/prompt/AiResponseList";
 
 
 interface IChatGPTRequest {
@@ -19,7 +20,10 @@ export const getNewAiResponse = async (data: IChatGPTRequest): Promise<IPostLlmR
     return res.data;
 }
 
-export const getAllAiResponseByPrompt = async (promptName: string, version: string): Promise<any> => {
+
+type TGetAiResponseByPromptRes = IAiResponse[];
+
+export const getAllAiResponseByPrompt = async (promptName: string, version: string): Promise<TGetAiResponseByPromptRes> => {
     const res = await axiosInstance.get(`/ai-response`, {
         params: {
             prompt_name: promptName,

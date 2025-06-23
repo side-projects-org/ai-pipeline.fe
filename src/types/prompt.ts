@@ -77,6 +77,8 @@ export interface IAiResponse {
     sk: string;
     key: string;
 
+    created_at: string;
+
     params: IAiRequestParams;
     answer: IAiAnswer;
     variables: Record<string, any>;

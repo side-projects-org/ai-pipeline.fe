@@ -40,7 +40,9 @@ const PromptDetail: React.FC = () => {
         }
 
         // TODO 단건 조회 API 로 변경해야함
-        return await api.ai.getAllAiResponseByPrompt(promptName, version);
+        const responseList = await api.ai.getAllAiResponseByPrompt(promptName, version);
+
+        return responseList.sort((a, b) => a.created_at > b.created_at ? -1 : 1);
     }
 
     const handleRunComplete = async () => {
