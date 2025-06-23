@@ -4,7 +4,7 @@ import styled from "styled-components";
 import PromptViewer from "@components/prompt/PromptViewer";
 import AiResponseList from "@components/prompt/AiResponseList";
 import {api} from "@apis/index";
-import {IPrompt} from "@/types/prompt";
+import {IAiResponse, IPrompt} from "@/types/prompt";
 
 
 const PromptDetail: React.FC = () => {
@@ -12,7 +12,7 @@ const PromptDetail: React.FC = () => {
     // paths variable 에 값이 있다면, 해당 값으로 기본값 설정
     const {promptName, version} = useParams();
     const [prompt, setPrompt] = React.useState<IPrompt | null>(null);
-    const [aiResponseList, setAiResponseList] = React.useState<any[]>([]);
+    const [aiResponseList, setAiResponseList] = React.useState<IAiResponse[] | null>(null);
     const getPromptDetail = async (promptName: string, version: string) => {
         if (!promptName || !version) {
             return;

@@ -8,7 +8,7 @@ interface IAiResponseProps {
 
 }
 
-const AiResponse = ({index, response}: IAiResponseProps) => {
+const AiResponseViewer = ({index, response}: IAiResponseProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [prompt, setPrompt] = useState<any>(null);
 
@@ -41,4 +41,4 @@ const Index = styled.div`
 `;
 
 
-export default AiResponse;
+export default AiResponseViewer;
