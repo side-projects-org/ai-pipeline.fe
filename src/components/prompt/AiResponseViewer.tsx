@@ -24,11 +24,19 @@ const AiResponseViewer = ({index, response}: IAiResponseProps) => {
                         ))}
                 </Variables>
                 <AiAnswer>{response.answer.choices?.[0]?.message.content || ""}</AiAnswer>
-
+                <CreatedAt>{response.answer.created ? new Date(response.answer.created * 1000).toLocaleString() : "N/A"}</CreatedAt>
             </Response>
         </AiResponseWrapper>
     );
 }
+
+const CreatedAt = styled.div`
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
+    text-align: right;
+`;
 
 const Variables = styled.div`
     width: 100%;

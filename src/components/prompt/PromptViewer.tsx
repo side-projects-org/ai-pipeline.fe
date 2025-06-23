@@ -10,12 +10,12 @@ import {postAiResponse} from "@apis/aiResponse";
 
 interface IPromptKeyProps {
     prompt: IPrompt;
+    onRunComplete: () => void;
 }
 
-const PromptViewer = ({prompt}: IPromptKeyProps) => {
+const PromptViewer = ({prompt, onRunComplete}: IPromptKeyProps) => {
     const [variableMap, setVariableMap] = useState<Map<string, string>>(new Map());
     const [isRunning, setIsRunning] = useState<boolean>(false);
-
 
     const isRunnable = (prompt: IPrompt, variables: Map<string, string>): boolean => {
         let runnable = true;
@@ -58,8 +58,6 @@ const PromptViewer = ({prompt}: IPromptKeyProps) => {
             max_completion_tokens: clonedPrompt.params?.max_completion_tokens || 1000,
         });
 
-        setIsRunning(false);
-
         const saveAiResponseRes = await api.aiResponse.postAiResponse({
             prompt_name: clonedPrompt.prompt_name,
             version: clonedPrompt.version,
@@ -69,9 +67,9 @@ const PromptViewer = ({prompt}: IPromptKeyProps) => {
 
         console.log(saveAiResponseRes);
 
-        alert(JSON.stringify(saveAiResponseRes, null, 2));
+        await onRunComplete();
 
-
+        setIsRunning(false);
     }
 
     const handleVariableChange = (key: string, value: string) => {

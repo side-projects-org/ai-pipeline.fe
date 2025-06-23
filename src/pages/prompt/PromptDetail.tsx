@@ -13,6 +13,7 @@ const PromptDetail: React.FC = () => {
     const {promptName, version} = useParams();
     const [prompt, setPrompt] = React.useState<IPrompt | null>(null);
     const [aiResponseList, setAiResponseList] = React.useState<IAiResponse[] | null>(null);
+
     const getPromptDetail = async (promptName: string, version: string) => {
         if (!promptName || !version) {
             return;
@@ -42,6 +43,13 @@ const PromptDetail: React.FC = () => {
         return await api.ai.getAllAiResponseByPrompt(promptName, version);
     }
 
+    const handleRunComplete = async () => {
+        if (!promptName || !version) return;
+
+        const updated = await getAiResponseList(promptName, version);
+        setAiResponseList(updated);
+    };
+
     useEffect(() => {
         if (!promptName || !version) {
             alert("프롬프트 이름과 버전을 확인해주세요.");
@@ -58,7 +66,7 @@ const PromptDetail: React.FC = () => {
 
     return (
         <PageLayout>
-            {prompt && <PromptViewer prompt={prompt} />}
+            {prompt && <PromptViewer prompt={prompt} onRunComplete={handleRunComplete}/>}
             {aiResponseList && <AiResponseList data={aiResponseList}/>}
         </PageLayout>
     )
