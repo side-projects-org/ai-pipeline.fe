@@ -1,21 +1,60 @@
-import React, {useEffect, useState} from "react";
-import {api} from "@apis/index";
-import {useNavigate, useParams, useRoutes} from "react-router-dom";
-import {useRecoilState} from "recoil";
-import {basePromptState} from "@state/BasePromptState";
+import React, {useEffect} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import styled from "styled-components";
-import Prompt from "@components/prompt/Prompt";
+import PromptViewer from "@components/prompt/PromptViewer";
 import AiResponseList from "@components/prompt/AiResponseList";
+import {api} from "@apis/index";
+import {IPrompt} from "@/types/prompt";
 
 
 const PromptDetail: React.FC = () => {
     const navigate = useNavigate();
     // paths variable 에 값이 있다면, 해당 값으로 기본값 설정
     const {promptName, version} = useParams();
+    const [prompt, setPrompt] = React.useState<IPrompt | null>(null);
+    const [aiResponseList, setAiResponseList] = React.useState<any[]>([]);
+    const getPromptDetail = async (promptName: string, version: string) => {
+        if (!promptName || !version) {
+            return;
+        }
 
+        // TODO 단건 조회 API 로 변경해야함
+        const res = await api.prompt.getAllPromptsByName(promptName);
+        if (res.length === 0 || !res.some((p: any) => p.version === version)) {
+            alert("해당 프롬프트가 존재하지 않습니다. 이전 페이지로 돌아갑니다.");
+            return;
+        }
 
+        console.log('res', res)
 
+        const matched: any = res.find((p: any) => p.version === version)
 
+        console.log('matched', matched)
+        return matched;
+    }
+
+    const getAiResponseList = async (promptName: string, version: string) => {
+        if (!promptName || !version) {
+            return [];
+        }
+
+        // TODO 단건 조회 API 로 변경해야함
+        return await api.ai.getAllAiResponseByPrompt(promptName, version);
+    }
+
+    useEffect(() => {
+        if (!promptName || !version) {
+            alert("프롬프트 이름과 버전을 확인해주세요.");
+            navigate('/prompt');
+            return;
+        }
+
+        getPromptDetail(promptName, version)
+            .then(setPrompt);
+
+        getAiResponseList(promptName, version)
+            .then(setAiResponseList);
+    }, []);
 
     // const getRequiredParams = () => {
     //     if (!prompt || !prompt.params) {
@@ -29,7 +68,7 @@ const PromptDetail: React.FC = () => {
     //         if (message.role === 'user' && message.content) {
     //             // 모든 {variable} 형태의 변수를 찾아서 requiredParams에 추가
     //             const regex = /{{(.*?)}}/g;
-    //             let match;
+    //             let match;å
     //             while ((match = regex.exec(message.content)) !== null) {
     //                 const paramName = match[1].trim();
     //                 if (paramName && !requiredParams.includes(paramName)) {
@@ -44,20 +83,8 @@ const PromptDetail: React.FC = () => {
 
     return (
         <PageLayout>
-            <Prompt promptName={promptName} version={version} editable={true}></Prompt>
-
-            {/*<PromptTestContainer>*/}
-            {/*    <RequiredParamsContainer>*/}
-            {/*        {getRequiredParams().map((param: string, index: number) => (*/}
-            {/*            <RequireParam key={index}>*/}
-            {/*                <div>{param}</div>*/}
-            {/*                <input type="text" placeholder={`Enter value for ${param}`} />*/}
-            {/*            </RequireParam>*/}
-            {/*        ))}*/}
-            {/*    </RequiredParamsContainer>*/}
-            {/*</PromptTestContainer>*/}
-            <AiResponseList version={version} promptName={promptName}/>
-
+            {prompt && <PromptViewer prompt={prompt} />}
+            {aiResponseList && <AiResponseList data={aiResponseList}/>}
         </PageLayout>
     )
 }
