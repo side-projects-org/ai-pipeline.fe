@@ -8,7 +8,7 @@ interface IPromptKeyProps {
 }
 
 const AiResponseList = ({data}: IPromptKeyProps) => {
-
+    console.log('data', data);
     return (
         <AiResponseContainer>
             {data.map((response: any, index: number) => (
@@ -23,6 +23,10 @@ const AiResponseList = ({data}: IPromptKeyProps) => {
 
 
 const AiResponseContainer = styled.div`
+    width: 100%;
+    height: 20rem;
+    display: flex;
+    flex-direction: row;
 `;
 
 export default AiResponseList;
