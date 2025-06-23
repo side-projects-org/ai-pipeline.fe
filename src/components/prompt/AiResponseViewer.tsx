@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import React, {useEffect, useState} from "react";
-import {api} from "@apis/index";
+import React from "react";
 
 interface IAiResponseProps {
     response: any;
@@ -9,9 +8,6 @@ interface IAiResponseProps {
 }
 
 const AiResponseViewer = ({index, response}: IAiResponseProps) => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [prompt, setPrompt] = useState<any>(null);
-
     return (
         <AiResponseWrapper key={index+1}>
             <Index>{index+1}</Index>
